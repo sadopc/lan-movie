@@ -1,0 +1,710 @@
+/**
+ * LANCast - Base Styles
+ * Responsive video container for LAN streaming
+ */
+
+/* Reset and base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: #000;
+  color: #fff;
+}
+
+/* Main container */
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Video container - maintains 16:9 aspect ratio */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  aspect-ratio: 16 / 9;
+  background-color: #111;
+}
+
+/* Video element - fills container */
+.video-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #000;
+}
+
+/* Status overlay */
+.stream-status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 10;
+}
+
+.stream-status .status-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background-color: #333;
+}
+
+.stream-status .status-text {
+  font-size: 1.25rem;
+  color: #aaa;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* Status states */
+.stream-status.waiting .status-icon {
+  background-color: #444;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.stream-status.loading .status-icon {
+  background-color: #2196f3;
+  animation: spin 1s linear infinite;
+}
+
+.stream-status.ended .status-icon {
+  background-color: #f44336;
+}
+
+.stream-status.error .status-icon {
+  background-color: #ff9800;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .stream-status .status-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+
+  .stream-status .status-text {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stream-status .status-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 12px;
+  }
+
+  .stream-status .status-text {
+    font-size: 0.875rem;
+  }
+}
+
+/* Fullscreen adjustments */
+.video-container:fullscreen,
+.video-container:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+}
+
+/* ========================
+   Control Bar Styles
+   ======================== */
+
+/* Control bar container */
+.control-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 20;
+}
+
+.control-bar.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Control buttons */
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.control-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.control-btn:focus {
+  outline: 2px solid #2196f3;
+  outline-offset: 2px;
+}
+
+/* SVG icons */
+.control-btn .icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+/* Play/Pause icon toggle */
+.control-btn .icon-pause {
+  display: none;
+}
+
+.control-btn.playing .icon-play {
+  display: none;
+}
+
+.control-btn.playing .icon-pause {
+  display: block;
+}
+
+/* Mute icon toggle */
+.control-btn .icon-volume-off {
+  display: none;
+}
+
+.control-btn.muted .icon-volume-on {
+  display: none;
+}
+
+.control-btn.muted .icon-volume-off {
+  display: block;
+}
+
+/* Fullscreen icon toggle */
+.control-btn .icon-fullscreen-exit {
+  display: none;
+}
+
+.control-btn.fullscreen .icon-fullscreen-enter {
+  display: none;
+}
+
+.control-btn.fullscreen .icon-fullscreen-exit {
+  display: block;
+}
+
+/* Volume control group */
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Volume slider */
+.volume-slider {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-track {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* Spacer to push fullscreen button to the right */
+.control-spacer {
+  flex: 1;
+}
+
+/* ========================
+   Quality Selector
+   ======================== */
+
+.quality-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.quality-selector .control-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: auto;
+  padding: 0 8px;
+}
+
+.quality-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fff;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* Quality menu (dropdown) */
+.quality-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 8px;
+  background-color: rgba(28, 28, 28, 0.95);
+  border-radius: 4px;
+  padding: 4px 0;
+  min-width: 100px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.quality-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.quality-option {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #ccc;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  text-align: center;
+}
+
+.quality-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.quality-option.active {
+  color: #2196f3;
+  font-weight: 600;
+}
+
+.quality-option.active::before {
+  content: '✓ ';
+}
+
+/* Hide cursor when controls are hidden (during playback) */
+.video-container:not(.controls-visible) {
+  cursor: none;
+}
+
+.video-container.controls-visible {
+  cursor: default;
+}
+
+/* ========================
+   Mobile/Touch Adjustments
+   ======================== */
+
+@media (max-width: 768px) {
+  .control-bar {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .control-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .control-btn .icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .volume-slider {
+    width: 60px;
+  }
+
+  /* Quality selector mobile adjustments */
+  .quality-label {
+    font-size: 0.7rem;
+    min-width: 28px;
+  }
+
+  .quality-menu {
+    min-width: 90px;
+  }
+
+  .quality-option {
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .control-bar {
+    padding: 8px 10px;
+    gap: 4px;
+  }
+
+  .control-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .volume-slider {
+    width: 50px;
+  }
+}
+
+/* Touch device adjustments - larger touch targets */
+@media (hover: none) and (pointer: coarse) {
+  .control-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  .volume-slider {
+    height: 8px;
+  }
+
+  .volume-slider::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+  }
+
+  .volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Fullscreen control bar adjustments */
+.video-container:fullscreen .control-bar,
+.video-container:-webkit-full-screen .control-bar {
+  padding: 16px 24px;
+}
+
+.video-container:fullscreen .control-btn,
+.video-container:-webkit-full-screen .control-btn {
+  width: 52px;
+  height: 52px;
+}
+
+.video-container:fullscreen .control-btn .icon,
+.video-container:-webkit-full-screen .control-btn .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.video-container:fullscreen .volume-slider,
+.video-container:-webkit-full-screen .volume-slider {
+  width: 100px;
+}
+
+.video-container:fullscreen .quality-label,
+.video-container:-webkit-full-screen .quality-label {
+  font-size: 0.875rem;
+}
+
+.video-container:fullscreen .quality-menu,
+.video-container:-webkit-full-screen .quality-menu {
+  min-width: 120px;
+}
+
+.video-container:fullscreen .quality-option,
+.video-container:-webkit-full-screen .quality-option {
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
+/* ========================
+   Status Info Panel
+   ======================== */
+
+.info-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0.85);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  z-index: 100;
+  min-width: 140px;
+}
+
+.info-panel.disconnected {
+  opacity: 0.6;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-label {
+  color: #888;
+}
+
+.info-value {
+  color: #fff;
+  font-weight: 500;
+}
+
+.info-value.full {
+  color: #f44336;
+  font-weight: 700;
+}
+
+/* Live/Offline badges */
+.live-badge,
+.offline-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.live-badge {
+  background-color: #f44336;
+  color: #fff;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+.offline-badge {
+  background-color: #444;
+  color: #aaa;
+}
+
+/* Hidden utility class */
+.hidden {
+  display: none !important;
+}
+
+/* Stream details (shown only when live) */
+.stream-details {
+  font-size: 0.8125rem;
+}
+
+/* Live badge pulse animation */
+@keyframes live-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(244, 67, 54, 0);
+  }
+}
+
+/* Info panel responsive adjustments */
+@media (max-width: 768px) {
+  .info-panel {
+    top: 8px;
+    right: 8px;
+    padding: 10px 12px;
+    font-size: 0.8125rem;
+    min-width: 120px;
+  }
+
+  .info-row {
+    gap: 6px;
+  }
+
+  .live-badge,
+  .offline-badge {
+    font-size: 0.6875rem;
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-panel {
+    top: 4px;
+    right: 4px;
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    min-width: 100px;
+  }
+}
+
+/* Fullscreen: position info panel correctly */
+.video-container:fullscreen ~ .info-panel,
+.video-container:-webkit-full-screen ~ .info-panel {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+}
+
+/* Container adjustment for info panel to sit outside video container */
+.container {
+  position: relative;
+}
+
+/* ========================
+   Landscape Mobile Mode
+   ======================== */
+
+/* Landscape orientation on mobile devices */
+@media (max-height: 500px) and (orientation: landscape) {
+  .info-panel {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    min-width: auto;
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .info-row {
+    gap: 4px;
+  }
+
+  .live-badge,
+  .offline-badge {
+    font-size: 0.625rem;
+    padding: 1px 4px;
+  }
+
+  .control-bar {
+    padding: 6px 12px;
+  }
+
+  .control-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .control-btn .icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .stream-status .status-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 8px;
+  }
+
+  .stream-status .status-text {
+    font-size: 0.875rem;
+  }
+}
+
+/* Prevent text selection on touch interactions */
+.control-bar,
+.info-panel,
+.quality-selector {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Prevent zoom on double-tap for controls */
+.control-btn {
+  touch-action: manipulation;
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .control-bar {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    padding-left: calc(16px + env(safe-area-inset-left));
+    padding-right: calc(16px + env(safe-area-inset-right));
+  }
+
+  .info-panel {
+    top: calc(16px + env(safe-area-inset-top));
+    right: calc(16px + env(safe-area-inset-right));
+  }
+}
